@@ -1,38 +1,69 @@
 import React from "react";
+import { StyleSheet, SafeAreaView, Dimensions } from "react-native";
 import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Dimensions,
-  Image
-} from "react-native";
-import { Permissions, ImagePicker } from "expo";
+  createAppContainer,
+  createMaterialTopTabNavigator
+} from "react-navigation";
+import { Permissions } from "expo";
+import Picture from "./Navigation/Picture";
+import Photo from "./Navigation/Photo";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
-const { width, height } = Dimensions.get("window");
+const tabNavigation = createMaterialTopTabNavigator(
+  {
+    Picture: {
+      screen: Picture,
+      navigationOptions: {
+        tabBarLabel: "Picture",
+        tabBarIcon: ({ tintColor }) => (
+          <Icon name="camera" color={tintColor} size={24} />
+        )
+      }
+    },
+    Photo: {
+      screen: Photo,
+      navigationOptions: {
+        tabBarLabel: "Photo",
+        tabBarIcon: ({ tintColor }) => (
+          <Icon name="image" color={tintColor} size={24} />
+        )
+      }
+    }
+  },
+  {
+    initialLayout: {
+      height: 100,
+      width: Dimensions.get("window").width
+    },
+    tabBarPosition: "bottom",
+    swipeEnabled: true,
+    animationEnabled: false,
+    tabBarOptions: {
+      tabStyle: {
+        width: Dimensions.get("window").width / 2,
+        height: Dimensions.get("window").height / 12,
+        justifyContent: "center",
+        alignItems: "center"
+      },
+      labelStyle: {
+        fontSize: 10
+      },
+      activeTintColor: "red",
+      inactiveTintColor: "black",
+      style: {
+        backgroundColor: "white"
+      },
+      indicatorStyle: { height: 0 },
+      showIcon: true,
+      upperCaseLabel: false,
+      showLabel: false
+    }
+  }
+);
+
+const AppContainer = createAppContainer(tabNavigation);
 
 export default class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      image: null
-    };
-  }
-
-  imagePick = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      exif: true,
-      quality: 1
-    });
-
-    console.log(result);
-
-    if (!result.cancelled) {
-      this.setState({ image: result.uri });
-    }
-  };
-
   async componentDidMount() {
     const permission = await Permissions.getAsync(Permissions.CAMERA_ROLL);
     if (permission.status !== "granted") {
@@ -42,24 +73,11 @@ export default class App extends React.Component {
       }
     }
   }
-
   render() {
-    const { image } = this.state;
     return (
-      <View style={styles.container}>
-        {this.state.image && (
-          <Image
-            source={{ uri: this.state.image }}
-            style={{ width: width / 2, height: height / 2 }}
-          />
-        )}
-        <TouchableOpacity
-          onPress={this.imagePick}
-          style={{ backgroundColor: "#aaaaaa", paddingBottom: 20 }}
-        >
-          <Text style={{ color: "black" }}>Image Picker</Text>
-        </TouchableOpacity>
-      </View>
+      <SafeAreaView style={{ flex: 1 }}>
+        <AppContainer />
+      </SafeAreaView>
     );
   }
 }
