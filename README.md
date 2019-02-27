@@ -1,8 +1,8 @@
 # React-native-Expo-ImagePicker
-React Native Expo Docs  ImagePicekr 
+React Native Expo 
+
+Camera And CameraRoll Permissions
+
+Camera Picture , CameraRoll Library
 
 
-##
-Tomorrow 
-###
-React Native Docs CameraRoll Use ImagePicker Make
